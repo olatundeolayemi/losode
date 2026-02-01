@@ -1,0 +1,154 @@
+'use client';
+
+import { useState } from 'react';
+import Header from '@/components/header';
+import Footer from '@/components/footer';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Heart, ShoppingCart, Filter, ChevronDown } from 'lucide-react';
+import { accessoriesProducts } from '@/lib/products';
+
+export default function MenAccessoriesPage() {
+  const [selectedFilters, setSelectedFilters] = useState({
+    designer: 'All',
+  });
+  const [sortBy, setSortBy] = useState('newest');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const allProducts = accessoriesProducts;
+  const designers = ['All', ...new Set(allProducts.map((p) => p.designer))];
+
+  let filteredProducts = [...allProducts];
+  
+  if (selectedFilters.designer !== 'All') {
+    filteredProducts = filteredProducts.filter(p => p.designer === selectedFilters.designer);
+  }
+
+  if (sortBy === 'price-low') {
+    filteredProducts.sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price-high') {
+    filteredProducts.sort((a, b) => b.price - a.price);
+  }
+
+  return (
+    <main className="min-h-screen bg-white">
+      <Header />
+
+      <div className="relative h-[300px] md:h-[400px] w-full">
+        <Image
+          src="/images/men-accessories-watch-1.jpg"
+          alt="Men's Accessories"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">Men's Accessories</h1>
+            <p className="text-lg md:text-xl max-w-2xl mx-auto px-4">
+              Complete your look with our curated accessories
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
+            >
+              <Filter className="w-4 h-4" />
+              <span>Filters</span>
+            </button>
+            <p className="text-sm text-gray-600">{filteredProducts.length} Items</p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Sort by:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="border rounded-lg px-3 py-2 text-sm"
+            >
+              <option value="newest">Newest</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="flex gap-8">
+          <div className={`${showFilters ? 'block' : 'hidden'} md:block w-64 flex-shrink-0`}>
+            <div className="sticky top-32 space-y-6">
+              <div>
+                <h3 className="font-semibold text-sm mb-3">Designers</h3>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {designers.slice(0, 10).map((designer) => (
+                    <label key={designer} className="flex items-center text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="designer"
+                        checked={selectedFilters.designer === designer}
+                        onChange={() => setSelectedFilters({ ...selectedFilters, designer })}
+                        className="mr-2"
+                      />
+                      <span className="truncate">{designer}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedFilters({ designer: 'All' })}
+                className="text-sm text-gray-600 hover:text-gray-900 underline"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {filteredProducts.map((product) => (
+                <Link key={product.id} href={`/product/${product.id}`} className="group">
+                  <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-gray-100 rounded-lg">
+                    <Image
+                      src={product.image || "/placeholder.svg"}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition duration-300"
+                    />
+                    {product.isNew && (
+                      <span className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded">
+                        NEW
+                      </span>
+                    )}
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition flex flex-col gap-2">
+                      <button className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+                        <Heart className="w-4 h-4" />
+                      </button>
+                      <button className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+                        <ShoppingCart className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 mb-1">{product.designer}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    ₦{product.price.toLocaleString()}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </main>
+  );
+}
