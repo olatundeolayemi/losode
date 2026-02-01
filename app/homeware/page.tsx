@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import AITaglineGenerator from '@/components/ai-tagline-generator';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, ShoppingCart, Filter, ChevronDown } from 'lucide-react';
@@ -73,11 +74,13 @@ export default function HomewarePage() {
   ];
 
   const categories = ['All', 'Furniture', 'Textiles', 'Kitchen', 'Lighting', 'Decor'];
-  
+
   let filteredProducts = [...homewareProducts];
-  
+
   if (selectedFilters.category !== 'All') {
-    filteredProducts = filteredProducts.filter(p => p.category === selectedFilters.category);
+    filteredProducts = filteredProducts.filter(
+      (p) => p.category === selectedFilters.category
+    );
   }
 
   if (sortBy === 'price-low') {
@@ -90,6 +93,7 @@ export default function HomewarePage() {
     <main className="min-h-screen bg-white">
       <Header />
 
+      {/* Hero Section */}
       <div className="relative h-[300px] md:h-[400px] w-full">
         <Image
           src="/images/category-homeware-hero.jpg"
@@ -100,7 +104,9 @@ export default function HomewarePage() {
         />
         <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">Homeware</h1>
+            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+              Homeware
+            </h1>
             <p className="text-lg md:text-xl max-w-2xl mx-auto px-4">
               Beautiful and functional pieces for your home
             </p>
@@ -108,6 +114,10 @@ export default function HomewarePage() {
         </div>
       </div>
 
+      {/* ✅ AI TAGLINE GENERATOR (NOW RENDERED) */}
+      <AITaglineGenerator productName="Homeware" />
+
+      {/* Products & Filters */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b">
           <div className="flex items-center gap-4">
@@ -118,9 +128,11 @@ export default function HomewarePage() {
               <Filter className="w-4 h-4" />
               <span>Filters</span>
             </button>
-            <p className="text-sm text-gray-600">{filteredProducts.length} Items</p>
+            <p className="text-sm text-gray-600">
+              {filteredProducts.length} Items
+            </p>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">Sort by:</span>
             <select
@@ -136,6 +148,7 @@ export default function HomewarePage() {
         </div>
 
         <div className="flex gap-8">
+          {/* Filters */}
           <div className={`${showFilters ? 'block' : 'hidden'} md:block w-64 flex-shrink-0`}>
             <div className="sticky top-32 space-y-6">
               <div>
@@ -150,7 +163,9 @@ export default function HomewarePage() {
                         type="radio"
                         name="category"
                         checked={selectedFilters.category === cat}
-                        onChange={() => setSelectedFilters({ ...selectedFilters, category: cat })}
+                        onChange={() =>
+                          setSelectedFilters({ ...selectedFilters, category: cat })
+                        }
                         className="mr-2"
                       />
                       <span>{cat}</span>
@@ -168,13 +183,14 @@ export default function HomewarePage() {
             </div>
           </div>
 
+          {/* Products */}
           <div className="flex-1">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredProducts.map((product) => (
                 <Link key={product.id} href={`/product/${product.id}`} className="group">
                   <div className="relative aspect-[3/4] mb-3 overflow-hidden bg-gray-100 rounded-lg">
                     <Image
-                      src={product.image || "/placeholder.svg"}
+                      src={product.image || '/placeholder.svg'}
                       alt={product.name}
                       fill
                       className="object-cover group-hover:scale-105 transition duration-300"
@@ -196,7 +212,9 @@ export default function HomewarePage() {
                   <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-gray-500 mb-1">{product.designer}</p>
+                  <p className="text-xs text-gray-500 mb-1">
+                    {product.designer}
+                  </p>
                   <p className="text-sm font-semibold text-gray-900">
                     ₦{product.price.toLocaleString()}
                   </p>
