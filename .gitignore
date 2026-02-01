@@ -25,3 +25,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts.DS_Store
+
+# Guide and Documentation files
+AI_FEATURES_GUIDE.md
+ARCHITECTURE.md
+README_FINAL.md
